@@ -4,7 +4,7 @@ import 'package:persiapanfit/utils/dbhelper.dart';
 class DetailPage extends StatefulWidget {
   final int id;
 
-  DetailPage({required this.id}); // Menerima id dari halaman sebelumnya
+  DetailPage({required this.id, required exerciseId}); // Menerima id dari halaman sebelumnya
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -45,20 +45,34 @@ class _DetailPageState extends State<DetailPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(exerciseDetail!['image'], fit: BoxFit.cover),
-            const SizedBox(height: 20),
-            Text(
-              exerciseDetail!['title'],
-              style: Theme.of(context).textTheme.headlineSmall,
+            // Menampilkan gambar
+            Container(
+              width: double.infinity,
+              height: 200, // Tentukan tinggi gambar
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: exerciseDetail?['image'] != null && exerciseDetail!['image'].startsWith('http')
+                      ? NetworkImage(exerciseDetail!['image'])
+                      : AssetImage(exerciseDetail!['image']) as ImageProvider,
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 16),
+            // Menampilkan judul
             Text(
-              exerciseDetail!['description'],
-              style: Theme.of(context).textTheme.bodyLarge,
+              exerciseDetail?['title'] ?? 'No title',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-          
+            SizedBox(height: 10),
+            // Menampilkan deskripsi
+            Text(
+              exerciseDetail?['description'] ?? 'No description',
+              style: TextStyle(fontSize: 16),
+            ),
           ],
         ),
       ),

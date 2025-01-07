@@ -162,4 +162,82 @@ Future<List<Map<String, dynamic>>> fetchWarmupExercises() async {
       throw Exception("Error deleting exercise: $e");
     }
   }
+
+  // Mengambil semua data dari tabel new_exercises
+Future<List<Map<String, dynamic>>> getAllNewExercises() async {
+  try {
+    final db = await database;
+    return await db.query('new_exercises');
+  } catch (e) {
+    throw Exception("Error getting all new exercises: $e");
+  }
+}
+
+// Mengambil data berdasarkan id dari tabel new_exercises
+Future<Map<String, dynamic>> getNewExerciseById(int id) async {
+  final db = await database;
+  var res = await db.query(
+    'new_exercises',
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+  return res.isNotEmpty ? res.first : {};
+}
+
+// Menambahkan data ke tabel new_exercises
+Future<int> insertNewExercise(Map<String, dynamic> exercise) async {
+  try {
+    final db = await database;
+    return await db.insert('new_exercises', exercise);
+  } catch (e) {
+    throw Exception("Error inserting into new_exercises: $e");
+  }
+}
+
+// Memperbarui data di tabel new_exercises berdasarkan id
+Future<int> updateNewExercise(int id, Map<String, dynamic> exercise) async {
+  try {
+    final db = await database;
+    return await db.update(
+      'new_exercises',
+      exercise,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  } catch (e) {
+    throw Exception("Error updating new_exercises: $e");
+  }
+}
+
+// Menghapus data dari tabel new_exercises berdasarkan id
+Future<int> deleteNewExercise(int id) async {
+  try {
+    final db = await database;
+    return await db.delete(
+      'new_exercises',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  } catch (e) {
+    throw Exception("Error deleting new_exercise: $e");
+  }
+}
+
+ // Fungsi untuk mengambil data berdasarkan ID
+  Future<List<Map<String, dynamic>>> fetchExerciseById(int id) async {
+    final db = await database; // Asumsikan ini adalah akses ke database kamu
+    try {
+      // Query untuk mengambil data berdasarkan ID
+      final result = await db.query(
+        'new_exercises', // Nama tabel
+        where: 'id = ?', // Kondisi WHERE
+        whereArgs: [id], // ID yang dicari
+      );
+      return result;
+    } catch (e) {
+      print("Error fetching exercise by ID: $e");
+      return [];
+    }
+  }
+
 }

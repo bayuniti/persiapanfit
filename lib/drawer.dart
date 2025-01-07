@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:persiapanfit/src/addmanfaat.dart';
 import 'package:persiapanfit/src/inputdata.dart';
+import 'package:persiapanfit/src/manfaat.dart';
 import 'package:persiapanfit/src/pemanasan.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -31,13 +33,8 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Manfaat'),
             onTap: () async {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => InputData()));
+                  MaterialPageRoute(builder: (context) => MyManfaat()));
             },
-          ),
-          ListTile(
-            leading: const Icon(Icons.star),
-            title: const Text('Beri Penilaian'),
-            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.info),

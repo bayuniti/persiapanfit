@@ -39,31 +39,71 @@ class _MyPemanasanState extends State<MyPemanasan> {
                     itemCount: warmUpExercises.length,
                     itemBuilder: (context, index) {
                       final exercise = warmUpExercises[index];
+
+                      // Mendefinisikan shortDescription
+                      String description = exercise['description'] ?? 'No description';
+                      String shortDescription = description.length > 100
+                          ? description.substring(0, 100) + '...'
+                          : description;
+
                       return Card(
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: Image.asset(
-                            exercise['image'],
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(exercise['title']),
-                          subtitle: Text(
-                            exercise['description'],
-                            maxLines: 2, // Batasi jumlah baris yang tampil
-                            overflow: TextOverflow.ellipsis, // Tambahkan elipsis jika teks panjang
-                          ),
+                        margin: EdgeInsets.all(10),
+                        child: InkWell(
                           onTap: () {
-                            // Navigasi ke halaman detail dan pass id
-                            Navigator.push(
+                            // Arahkan ke halaman detail berdasarkan ID
+                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    DetailPage(id: exercise['id']),
+                                    DetailPage(id: exercise['id'], exerciseId: null,),
                               ),
                             );
                           },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Menampilkan gambar
+                              Container(
+                                width: 100,
+                                height: 100,
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: exercise['image'] != null &&
+                                            exercise['image'].isNotEmpty
+                                        ? (exercise['image'].startsWith('http')
+                                            ? NetworkImage(exercise['image'])
+                                            : AssetImage(exercise['image']))
+                                        as ImageProvider
+                                        : AssetImage('assets/placeholder.png')
+                                            as ImageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              // Menampilkan judul dan deskripsi singkat
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        exercise['title'] ?? 'No title',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        shortDescription,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

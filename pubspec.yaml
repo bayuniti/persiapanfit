@@ -66,6 +66,8 @@ flutter:
     - assets/images/persiapan.jpeg
     - assets/images/joging.jpeg
     - assets/images/pullup.jpg
+    - assets/images/pushup.jpeg
+    - assets/images/situp.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

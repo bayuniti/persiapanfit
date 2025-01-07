@@ -20,9 +20,10 @@ class DatabaseHelper {
       String path = join(await getDatabasesPath(), 'exercise_database.db');
       return await openDatabase(
         path,
-        version: 1,
+        version: 2, // Ubah versi database menjadi 2
         onCreate: (db, version) {
-          return db.execute('''
+          // Membuat tabel exercises
+          db.execute('''
             CREATE TABLE exercises (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               title TEXT,
@@ -30,6 +31,28 @@ class DatabaseHelper {
               image TEXT
             )
           ''');
+          // Membuat tabel new_exercises
+          db.execute('''
+            CREATE TABLE new_exercises (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT,
+              description TEXT,
+              image TEXT
+            )
+          ''');
+        },
+        onUpgrade: (db, oldVersion, newVersion) {
+          if (oldVersion < 2) {
+            // Membuat tabel new_exercises saat upgrade ke versi 2
+            db.execute('''
+              CREATE TABLE new_exercises (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                description TEXT,
+                image TEXT
+              )
+            ''');
+          }
         },
       );
     } catch (e) {
@@ -37,7 +60,7 @@ class DatabaseHelper {
     }
   }
 
-  // Insert new exercise into the database
+  // Fungsi untuk menyisipkan data ke tabel exercises
   Future<int> insertExercise(Map<String, dynamic> exercise) async {
     try {
       final db = await database;
@@ -47,7 +70,17 @@ class DatabaseHelper {
     }
   }
 
-  // Fetch all exercises from the database
+  // Fungsi untuk menyisipkan data ke tabel new_exercises
+  Future<int> insertIntoNewTable(Map<String, dynamic> exercise) async {
+    try {
+      final db = await database;
+      return await db.insert('new_exercises', exercise);
+    } catch (e) {
+      throw Exception("Error inserting exercise into new table: $e");
+    }
+  }
+
+  // Mengambil data dari tabel exercises
   Future<List<Map<String, dynamic>>> fetchExercises() async {
     try {
       final db = await database;
@@ -57,7 +90,51 @@ class DatabaseHelper {
     }
   }
 
-  // Update exercise data by id
+  
+Future<List<Map<String, dynamic>>> fetchWarmupExercises() async {
+  try {
+    final db = await database;
+    return await db.query('new_exercises'); 
+  } catch (e) {
+    throw Exception("Error fetching warmup exercises: $e");
+  }
+}
+
+  // Fungsi untuk menyalin data dari tabel exercises ke tabel new_exercises
+  Future<void> copyDataToNewTable() async {
+    try {
+      final db = await database;
+      final data = await fetchExercises(); // Ambil data dari tabel lama
+      for (var row in data) {
+        await db.insert('new_exercises', row); // Masukkan ke tabel baru
+      }
+    } catch (e) {
+      throw Exception("Error copying data to new table: $e");
+    }
+  }
+
+  // Fungsi untuk mengambil semua data dari tabel exercises
+  Future<List<Map<String, dynamic>>> getAllExercises() async {
+    try {
+      final db = await database;
+      return await db.query('exercises');
+    } catch (e) {
+      throw Exception("Error getting all exercises: $e");
+    }
+  }
+
+  // Mengambil data berdasarkan id dari tabel exercises
+  Future<Map<String, dynamic>> getExerciseById(int id) async {
+    final db = await database;
+    var res = await db.query(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return res.isNotEmpty ? res.first : {};
+  }
+
+  // Update data di tabel exercises berdasarkan id
   Future<int> updateExercise(int id, Map<String, dynamic> exercise) async {
     try {
       final db = await database;
@@ -72,7 +149,7 @@ class DatabaseHelper {
     }
   }
 
-  // Delete exercise by id
+  // Hapus data dari tabel exercises berdasarkan id
   Future<int> deleteExercise(int id) async {
     try {
       final db = await database;
@@ -84,25 +161,5 @@ class DatabaseHelper {
     } catch (e) {
       throw Exception("Error deleting exercise: $e");
     }
-  }
-
-  // Get all exercises
-  Future<List<Map<String, dynamic>>> getAllExercises() async {
-    try {
-      final db = await database;
-      return await db.query('exercises');
-    } catch (e) {
-      throw Exception("Error getting all exercises: $e");
-    }
-  }
-
-   Future<Map<String, dynamic>> getExerciseById(int id) async {
-    final db = await database;
-    var res = await db.query(
-      'exercises',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    return res.isNotEmpty ? res.first : {};
   }
 }

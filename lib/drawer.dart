@@ -4,8 +4,11 @@ import 'package:persiapanfit/src/inputdata.dart';
 import 'package:persiapanfit/src/manfaat.dart';
 import 'package:persiapanfit/src/pemanasan.dart';
 
+
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,14 @@ class MyDrawer extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MyPemanasan()));
             },
           ),
+           ListTile(
+            leading: const Icon(Icons.input),
+            title: const Text('Input Data Pemanasan'),
+            onTap: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => InputData()));
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.thumb_up),
             title: const Text('Manfaat'),
@@ -36,6 +47,16 @@ class MyDrawer extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MyManfaat()));
             },
           ),
+         
+          ListTile(
+            leading: const Icon(Icons.input),
+            title: const Text('Input Data Manfaat'),
+            onTap: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ManageNewExercises()));
+            },
+          ),
+         
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('Info Aplikasi'),
